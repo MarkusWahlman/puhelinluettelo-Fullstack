@@ -8,9 +8,9 @@ router.get("/", (request: Request, response: Response) => {
 });
 
 router.post("/", (request: Request, response: Response) => {
-  const newPerson = request.body;
-  const newName = newPerson.name;
-  const newNumber = newPerson.number;
+  const requestBody = request.body;
+  const newName = requestBody.name;
+  const newNumber = requestBody.number;
 
   if (!newName || !newNumber) {
     response.status(400).json({ error: "Invalid request" });
@@ -25,13 +25,15 @@ router.post("/", (request: Request, response: Response) => {
     return;
   }
 
-  persons.push({
+  const newPerson = {
     id: Math.floor(Math.random() * 1_000_000_000_000).toString(),
     name: newName,
     number: newNumber,
-  });
+  };
 
-  response.json("Contact created successfully");
+  persons.push(newPerson);
+
+  response.json(newPerson);
 });
 
 router.get("/:id", (request: Request, response: Response) => {
