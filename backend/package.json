@@ -4,9 +4,9 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node src/index.ts",
+    "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build:ui": "@powershell Remove-Item -Recurse -Force dist && cd ../frontend && npm run build && @powershell Copy-Item dist -Recurse ../backend",
+    "build:ui": "cd ../frontend && @powershell Remove-Item -Recurse -Force dist && npm run build",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "author": "",

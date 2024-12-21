@@ -9,6 +9,7 @@ import { customMorgan } from "./middleware/customMorgan";
 app.use(cors());
 app.use(express.json());
 app.use(customMorgan);
+app.use(express.static("../frontend/dist"));
 
 app.use("/api", apiRouter);
 
