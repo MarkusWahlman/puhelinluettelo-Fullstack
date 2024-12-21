@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseDomain = import.meta.env.BASE_URL || "http://localhost:3001";
+const baseDomain = import.meta.env.VITE_EXTERNAL_URL || "http://localhost:3001";
 const baseUrl = `${baseDomain}/api/persons`;
 
 const getAll = () => {
