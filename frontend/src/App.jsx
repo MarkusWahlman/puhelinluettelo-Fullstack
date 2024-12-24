@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PersonList } from "./components/PersonList";
 import { AddPersonForm } from "./components/AddPersonForm";
 import personService from "./services/persons";
@@ -11,6 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [notificationObject, setNotificationObject] = useState(null);
+
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -36,11 +38,14 @@ const App = () => {
   };
 
   const showTimedNotification = (message, color) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setNotificationObject({
       message,
       color,
     });
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setNotificationObject(null);
     }, 5000);
   };
@@ -48,9 +53,8 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
 
-    //This should be on the server side
     const foundPerson = persons.find((person) => person.name === newName);
-    //
+
     const personObject = {
       name: newName,
       number: newPhone,
@@ -90,19 +94,26 @@ const App = () => {
       return;
     }
 
-    personService.create(personObject).then((response) => {
-      const responseData = response.data;
-      setPersons([
-        ...persons,
-        {
-          name: responseData.name,
-          number: responseData.number,
-          id: responseData.id,
-        },
-      ]);
+    personService
+      .create(personObject)
+      .then((response) => {
+        const responseData = response.data;
+        setPersons([
+          ...persons,
+          {
+            name: responseData.name,
+            number: responseData.number,
+            id: responseData.id,
+          },
+        ]);
 
-      showTimedNotification(`Added ${newName}`, "green");
-    });
+        showTimedNotification(`Added ${newName}`, "green");
+      })
+      .catch((error) => {
+        if (error.response?.data?.error) {
+          showTimedNotification(error.response.data.error, "red");
+        }
+      });
   };
 
   const handleNameChange = (event) => {

@@ -1,16 +1,22 @@
 import { Router, Request, Response } from "express";
 
 import { personsRouter } from "./Persons";
-import { persons } from "../persons";
+import { Person } from "../models/person";
 
 const router = Router();
 
 router.use("/persons", personsRouter);
 router.get("/info", (request: Request, response: Response) => {
-  response.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${new Date()}</p>
-    `);
+  Person.countDocuments({})
+    .then((count) => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `);
+    })
+    .catch(() => {
+      response.status(503).send("Service Unavailable");
+    });
 });
 
 export { router as apiRouter };
